@@ -1,5 +1,58 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Play, Pause, Download, Settings, Save, Trash2, Volume2, Zap } from 'lucide-react';
+import { Mic, Play, Pause, Download, Settings, Save, Trash2, Volume2, Zap, User } from 'lucide-react';
+
+interface VoiceOption {
+  id: string;
+  name: string;
+  gender: string;
+  audioUrl: string;
+  text: string;
+}
+
+const VOICES: VoiceOption[] = [
+  {
+    id: 'charles',
+    name: 'Charles',
+    gender: '男声',
+    audioUrl: 'https://sf-maas-uat-prod.oss-cn-shanghai.aliyuncs.com/voice_template/fish_audio-Charles.mp3',
+    text: '他又躺在那里，眼睛闭着，仍然沉浸在梦境的气氛里。那是个庞杂而亮堂的梦',
+  },
+  {
+    id: 'alex',
+    name: 'Alex',
+    gender: '男声',
+    audioUrl: 'https://sf-maas-uat-prod.oss-cn-shanghai.aliyuncs.com/voice_template/fish_audio-Alex.mp3',
+    text: '在一无所知中，梦里的一天结束了，一个新的轮回便会开始',
+  },
+  {
+    id: 'benjamin',
+    name: 'Benjamin',
+    gender: '男声',
+    audioUrl: 'https://sf-maas-uat-prod.oss-cn-shanghai.aliyuncs.com/voice_template/fish_audio-Benjamin.mp3',
+    text: '清晨的阳光透过窗帘，洒在斑驳的地板上，温暖而宁静',
+  },
+  {
+    id: 'claire',
+    name: 'Claire',
+    gender: '女声',
+    audioUrl: 'https://sf-maas-uat-prod.oss-cn-shanghai.aliyuncs.com/voice_template/fish_audio-Claire.mp3',
+    text: '她轻轻走过花园，花瓣落在肩头，微风带来春天的气息',
+  },
+  {
+    id: 'anna',
+    name: 'Anna',
+    gender: '女声',
+    audioUrl: 'https://sf-maas-uat-prod.oss-cn-shanghai.aliyuncs.com/voice_template/fish_audio-Anna.mp3',
+    text: '夜幕降临，星星点点，月光如水般洒落人间',
+  },
+  {
+    id: 'bella',
+    name: 'Bella',
+    gender: '女声',
+    audioUrl: 'https://sf-maas-uat-prod.oss-cn-shanghai.aliyuncs.com/voice_template/fish_audio-Bella.mp3',
+    text: '欢快的旋律响起，人们翩翩起舞，整个房间充满了欢乐',
+  },
+];
 
 export default function Home() {
   const [apiKey, setApiKey] = useState('');
@@ -7,6 +60,7 @@ export default function Home() {
   const [speed, setSpeed] = useState(1.0);
   const [gain, setGain] = useState(0.0);
   const [responseFormat, setResponseFormat] = useState('mp3');
+  const [selectedVoice, setSelectedVoice] = useState<VoiceOption>(VOICES[0]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -57,8 +111,8 @@ export default function Home() {
           max_tokens: 1600,
           references: [
             {
-              audio: 'https://sf-maas-uat-prod.oss-cn-shanghai.aliyuncs.com/voice_template/fish_audio-Charles.mp3',
-              text: '他又躺在那里，眼睛闭着，仍然沉浸在梦境的气氛里。那是个庞杂而亮堂的梦',
+              audio: selectedVoice.audioUrl,
+              text: selectedVoice.text,
             },
           ],
         }),
@@ -169,6 +223,43 @@ export default function Home() {
             />
             <div className="text-right text-xs text-slate-500 mt-2">
               {text.length} 字符
+            </div>
+          </div>
+
+          {/* Voice Selection */}
+          <div className="mb-8">
+            <label className="block text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
+              <User className="w-4 h-4" />
+              选择音色
+            </label>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+              {VOICES.map((voice) => (
+                <button
+                  key={voice.id}
+                  onClick={() => setSelectedVoice(voice)}
+                  className={`p-4 rounded-xl border transition-all text-left ${
+                    selectedVoice.id === voice.id
+                      ? 'bg-blue-600/30 border-blue-500 shadow-lg shadow-blue-500/20'
+                      : 'bg-slate-700/30 border-slate-600/30 hover:bg-slate-700/50 hover:border-slate-500'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      voice.gender === '男声' ? 'bg-blue-500/20' : 'bg-pink-500/20'
+                    }`}>
+                      <User className={`w-4 h-4 ${
+                        voice.gender === '男声' ? 'text-blue-400' : 'text-pink-400'
+                      }`} />
+                    </div>
+                    <span className="font-medium text-sm">{voice.name}</span>
+                  </div>
+                  <div className={`text-xs ${
+                    voice.gender === '男声' ? 'text-blue-300' : 'text-pink-300'
+                  }`}>
+                    {voice.gender}
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
 
