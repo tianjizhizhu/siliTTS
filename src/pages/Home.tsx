@@ -60,8 +60,7 @@ export default function Home() {
   const [speed, setSpeed] = useState(1.0);
   const [gain, setGain] = useState(0.0);
   const [responseFormat, setResponseFormat] = useState('mp3');
-  const [selectedMaleVoice, setSelectedMaleVoice] = useState<VoiceOption>(VOICES[0]);
-  const [selectedFemaleVoice, setSelectedFemaleVoice] = useState<VoiceOption>(VOICES[3]);
+  const [selectedVoice, setSelectedVoice] = useState<VoiceOption>(VOICES[0]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -112,12 +111,12 @@ export default function Home() {
           max_tokens: 1600,
           references: [
             {
-              audio: selectedMaleVoice.audioUrl,
-              text: selectedMaleVoice.text,
+              audio: selectedVoice.audioUrl,
+              text: selectedVoice.text,
             },
             {
-              audio: selectedFemaleVoice.audioUrl,
-              text: selectedFemaleVoice.text,
+              audio: selectedVoice.audioUrl,
+              text: selectedVoice.text,
             },
           ],
         }),
@@ -232,67 +231,39 @@ export default function Home() {
           </div>
 
           {/* Voice Selection */}
-          <div className="mb-8 space-y-6">
-            {/* Male Voice Selection */}
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
-                <User className="w-4 h-4 text-blue-400" />
-                说话人 [S1] - 男声
-              </label>
-              <div className="grid grid-cols-3 gap-3">
-                {VOICES.filter(v => v.gender === '男声').map((voice) => (
-                  <button
-                    key={voice.id}
-                    onClick={() => setSelectedMaleVoice(voice)}
-                    className={`p-4 rounded-xl border transition-all text-left ${
-                      selectedMaleVoice.id === voice.id
-                        ? 'bg-blue-600/30 border-blue-500 shadow-lg shadow-blue-500/20'
-                        : 'bg-slate-700/30 border-slate-600/30 hover:bg-slate-700/50 hover:border-slate-500'
+          <div className="mb-8">
+            <label className="block text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
+              <User className="w-4 h-4" />
+              选择音色
+            </label>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+              {VOICES.map((voice) => (
+                <button
+                  key={voice.id}
+                  onClick={() => setSelectedVoice(voice)}
+                  className={`p-4 rounded-xl border transition-all text-left ${
+                    selectedVoice.id === voice.id
+                      ? 'bg-blue-600/30 border-blue-500 shadow-lg shadow-blue-500/20'
+                      : 'bg-slate-700/30 border-slate-600/30 hover:bg-slate-700/50 hover:border-slate-500'
                   }`}
-                  >
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center bg-blue-500/20">
-                        <User className="w-4 h-4 text-blue-400" />
-                      </div>
-                      <span className="font-medium text-sm">{voice.name}</span>
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      voice.gender === '男声' ? 'bg-blue-500/20' : 'bg-pink-500/20'
+                    }`}>
+                      <User className={`w-4 h-4 ${
+                        voice.gender === '男声' ? 'text-blue-400' : 'text-pink-400'
+                      }`} />
                     </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Female Voice Selection */}
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
-                <User className="w-4 h-4 text-pink-400" />
-                说话人 [S2] - 女声
-              </label>
-              <div className="grid grid-cols-3 gap-3">
-                {VOICES.filter(v => v.gender === '女声').map((voice) => (
-                  <button
-                    key={voice.id}
-                    onClick={() => setSelectedFemaleVoice(voice)}
-                    className={`p-4 rounded-xl border transition-all text-left ${
-                      selectedFemaleVoice.id === voice.id
-                        ? 'bg-pink-600/30 border-pink-500 shadow-lg shadow-pink-500/20'
-                        : 'bg-slate-700/30 border-slate-600/30 hover:bg-slate-700/50 hover:border-slate-500'
-                  }`}
-                  >
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center bg-pink-500/20">
-                        <User className="w-4 h-4 text-pink-400" />
-                      </div>
-                      <span className="font-medium text-sm">{voice.name}</span>
-                    </div>
+                    <span className="font-medium text-sm">{voice.name}</span>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Usage Instructions */}
-            <div className="p-4 bg-slate-700/30 rounded-xl border border-slate-600/30 text-sm text-slate-400">
-              <p className="mb-2">💡 使用提示：在文本中使用 <code className="text-blue-400">[S1]</code> 和 <code className="text-pink-400">[S2]</code> 标记可以切换说话人</p>
-              <p>示例：<code className="text-blue-400">[S1]</code>你好，我是说话人一<code className="text-pink-400">[S2]</code>你好，我是说话人二</p>
+                  <div className={`text-xs ${
+                    voice.gender === '男声' ? 'text-blue-300' : 'text-pink-300'
+                  }`}>
+                    {voice.gender}
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
 
