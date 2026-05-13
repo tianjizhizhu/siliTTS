@@ -55,6 +55,12 @@ export default function Home() {
           gain: gain,
           response_format: responseFormat,
           max_tokens: 1600,
+          references: [
+            {
+              audio: 'https://sf-maas-uat-prod.oss-cn-shanghai.aliyuncs.com/voice_template/fish_audio-Charles.mp3',
+              text: '他又躺在那里，眼睛闭着，仍然沉浸在梦境的气氛里。那是个庞杂而亮堂的梦',
+            },
+          ],
         }),
       });
 
